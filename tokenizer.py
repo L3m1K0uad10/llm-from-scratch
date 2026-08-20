@@ -50,12 +50,21 @@ class Tokenizer:
                 else:
                     pair_tuple = tuple(list(prev_word))
                 
-                print(f"{pair_tuple} : {count}")
+                if pair_tuple in pair_frequency_dictionary.keys(): # checks if word frequency already recorded in pair_frequency_dictionary
+                    count += pair_frequency_dictionary[pair_tuple]
+
                 pair_frequency_dictionary[pair_tuple] = count
-                #break 
-            break
 
         return pair_frequency_dictionary
+    
+
+    def prettier(dictionary:dict) -> None:
+        """  
+        print dictionary in a row wise pretty format
+        """
+
+        for pair in dictionary.items():
+            print(pair)
             
 
 
@@ -77,3 +86,6 @@ print("\n")
 
 pair_frequency = Tokenizer.get_pair_frequency(corpus)
 print(pair_frequency)
+
+print("\n")
+Tokenizer.prettier(pair_frequency)
