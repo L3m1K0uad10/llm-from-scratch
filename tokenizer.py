@@ -1,63 +1,60 @@
 
 
-
+# implementing Byte-Pair Encoding (BPE) tokenizer
 class Tokenizer:
     def __init__(self):
         pass 
-
+    
+    @staticmethod
     def split(corpus:list) -> list:
         """ 
-        split whole corpus into unique character.
-        add </w> at the end of the unique characters list.
-        sort the unique characters list
+        Extract all unique characters from the corpus, 
+        add the </w> end-of-word token, and return them sorted.
         """
 
         unique_characters = []
 
         for sentence in corpus:
-            for character in list(sentence):
+            for character in sentence:
                 if character not in unique_characters:
                     unique_characters.append(character) 
         
         unique_characters.append("</w>")
-
         unique_characters.sort()
     
         return unique_characters
     
-    
+    @staticmethod
     def get_pair_frequency(corpus:list) -> dict:
         """  
-        split whole corpus into word composed character.
-        get and set the frequency of each word composed character.
+        Tokenize the corpus into words, add </w> to the end of every word,
+        and count their frequencies across the corpus.
         """
         
         pair_frequency_dictionary = {}
 
         for sentence in corpus:
+            # Split the sentence into a list of words once.
+            # Doing sentence.split() once is much faster than calling it repeatedly in a loop.
+            words = sentence.split()
             
-            # comparing a word to other word in the same sentence to look if they match or not
-            for index, word in enumerate(sentence.split()):
-                count = 0
-                prev_word = word
-
-                for word in sentence.split():
-                    if prev_word == word: 
-                        count += 1
-
-                if index == len(sentence.split()) - 1:
-                    pair_tuple = tuple(list(prev_word) + ["</w>"])
-                else:
-                    pair_tuple = tuple(list(prev_word))
+            # Iterate through each word in the sentence exactly once.
+            for index, word in enumerate(words):
                 
-                if pair_tuple in pair_frequency_dictionary.keys(): # checks if word frequency already recorded in pair_frequency_dictionary
-                    count += pair_frequency_dictionary[pair_tuple]
-
-                pair_frequency_dictionary[pair_tuple] = count
+                # Append the "</w>" token to the end of each character list.
+                pair_tuple = tuple(list(word) + ["</w>"])
+                
+                # Update the dictionary.
+                # Since we are visiting every word occurrence one by one,
+                # we just add 1 to its total count in our dictionary.
+                if pair_tuple in pair_frequency_dictionary: 
+                    pair_frequency_dictionary[pair_tuple] += 1
+                else:
+                    pair_frequency_dictionary[pair_tuple] = 1
 
         return pair_frequency_dictionary
     
-
+    @staticmethod
     def prettier(dictionary:dict) -> None:
         """  
         print dictionary in a row wise pretty format
@@ -79,13 +76,13 @@ corpus = [
 ]
 
 tokenizer = Tokenizer()
-splitted_characters = Tokenizer.split(corpus)
+splitted_characters = tokenizer.split(corpus)
 print(splitted_characters)
 
 print("\n")
 
-pair_frequency = Tokenizer.get_pair_frequency(corpus)
+pair_frequency = tokenizer.get_pair_frequency(corpus)
 print(pair_frequency)
 
 print("\n")
-Tokenizer.prettier(pair_frequency)
+tokenizer.prettier(pair_frequency)
