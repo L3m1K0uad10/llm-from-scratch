@@ -34,17 +34,17 @@ class Tokenizer:
         pair_frequency_dictionary = {}
 
         for sentence in corpus:
-            # Split the sentence into a list of words once.
+            # splitting the sentence into a list of words once.
             # Doing sentence.split() once is much faster than calling it repeatedly in a loop.
             words = sentence.split()
             
-            # Iterate through each word in the sentence exactly once.
+            # iterating through each word in the sentence exactly once.
             for index, word in enumerate(words):
                 
-                # Append the "</w>" token to the end of each character list.
+                # appending the "</w>" token to the end of each character list.
                 pair_tuple = tuple(list(word) + ["</w>"])
                 
-                # Update the dictionary.
+                # updating the dictionary.
                 # Since we are visiting every word occurrence one by one,
                 # we just add 1 to its total count in our dictionary.
                 if pair_tuple in pair_frequency_dictionary: 
@@ -63,7 +63,7 @@ class Tokenizer:
         pair_stats = {}
 
         for pre_token in pair_frequency_dict:
-            freq = pair_frequency_dict[pre_token] # retrieve the frequency of the pre-token
+            freq = pair_frequency_dict[pre_token] # retrieves the frequency of the pre-token
             n = len(pre_token)
 
             for i in range(1, n):
@@ -74,7 +74,44 @@ class Tokenizer:
                 else:
                     pair_stats[pair] = freq
 
-        return pair_stats            
+        return pair_stats       
+
+    @staticmethod
+    def merge_pair(pair_frequency:dict, pair_stats:dict) -> dict:
+        """  
+        merge most frequent pair from pair_stats to pair_frequency.
+        """
+
+        # finding the most frequent pair present in pair_stats
+        higher_frequency_value = max(pair_stats.values())
+        frequent_pair = None
+
+        for key_pair in pair_stats:
+            if pair_stats[key_pair] == higher_frequency_value:
+                frequent_pair = key_pair 
+                break 
+        
+        # merging the most frequent pair accordingly to pair_frequency
+        pair_frequency_copy = pair_frequency.copy()
+        
+        for key_pair in pair_frequency:
+            n = len(key_pair)
+
+            for i in range(1, n):
+                pair = (key_pair[i - 1], key_pair[i])
+                
+                if pair == frequent_pair: 
+                    temp = list(key_pair)
+                    value_joined = temp.pop(i - 1) + temp.pop(i - 1) # should have been temp.pop(i - 1) and temp.pop(i) but after the first pop temp got 1 value shorter
+                    temp.insert(i - 1, value_joined)
+
+                    freq = pair_frequency_copy.pop(key_pair)
+                    if i == len(key_pair) - 1:
+                        pair_frequency_copy[tuple(temp + ["</w>"])] = freq
+                    else:
+                        pair_frequency_copy[tuple(temp)] = freq
+        
+        return pair_frequency_copy
 
     @staticmethod
     def prettier(dictionary:dict) -> None:
@@ -113,3 +150,7 @@ print(pair_stats)
 
 print("\n")
 tokenizer.prettier(pair_stats)
+
+print("\n")
+merged_pair = tokenizer.merge_pair(pair_frequency, pair_stats)
+print(merged_pair)
