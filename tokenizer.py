@@ -53,7 +53,29 @@ class Tokenizer:
                     pair_frequency_dictionary[pair_tuple] = 1
 
         return pair_frequency_dictionary
-    
+
+    @staticmethod
+    def get_pair_stats(pair_frequency_dict:dict) -> dict:
+        """  
+        get sub pre-token pair statistics(no of occurence in the whole dictionary)
+        """
+
+        pair_stats = {}
+
+        for pre_token in pair_frequency_dict:
+            freq = pair_frequency_dict[pre_token] # retrieve the frequency of the pre-token
+            n = len(pre_token)
+
+            for i in range(1, n):
+                pair = (pre_token[i - 1], pre_token[i])
+                
+                if pair in pair_stats: 
+                    pair_stats[pair] += freq
+                else:
+                    pair_stats[pair] = freq
+
+        return pair_stats            
+
     @staticmethod
     def prettier(dictionary:dict) -> None:
         """  
@@ -62,9 +84,6 @@ class Tokenizer:
 
         for pair in dictionary.items():
             print(pair)
-            
-
-
 
 
 
@@ -86,3 +105,11 @@ print(pair_frequency)
 
 print("\n")
 tokenizer.prettier(pair_frequency)
+
+print("\n")
+
+pair_stats = tokenizer.get_pair_stats(pair_frequency)
+print(pair_stats)
+
+print("\n")
+tokenizer.prettier(pair_stats)
