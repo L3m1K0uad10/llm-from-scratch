@@ -92,26 +92,27 @@ class Tokenizer:
                 break 
         
         # merging the most frequent pair accordingly to pair_frequency
-        pair_frequency_copy = pair_frequency.copy()
+        new_pair_frequency = {}
         
-        for key_pair in pair_frequency:
+        for key_pair, freq in pair_frequency.items():
+            new_key = []
+            i = 0
             n = len(key_pair)
 
-            for i in range(1, n):
-                pair = (key_pair[i - 1], key_pair[i])
-                
-                if pair == frequent_pair: 
-                    temp = list(key_pair)
-                    value_joined = temp.pop(i - 1) + temp.pop(i - 1) # should have been temp.pop(i - 1) and temp.pop(i) but after the first pop temp got 1 value shorter
-                    temp.insert(i - 1, value_joined)
+            while i < n:
+                # if we find a matching pair, merge them and jump forward by 2
+                if i < n - 1 and (key_pair[i], key_pair[i+1]) == frequent_pair:
+                    new_key.append(key_pair[i] + key_pair[i+1])
+                    i += 2
+                else:
+                    new_key.append(key_pair[i])
+                    i += 1
+            
+            new_key_tuple = tuple(new_key)
+            # Accumulate frequencies in case different keys merge to the same target tuple
+            new_pair_frequency[new_key_tuple] = new_pair_frequency.get(new_key_tuple, 0) + freq
 
-                    freq = pair_frequency_copy.pop(key_pair)
-                    if i == len(key_pair) - 1:
-                        pair_frequency_copy[tuple(temp + ["</w>"])] = freq
-                    else:
-                        pair_frequency_copy[tuple(temp)] = freq
-        
-        return pair_frequency_copy
+        return new_pair_frequency
 
     @staticmethod
     def prettier(dictionary:dict) -> None:
@@ -151,6 +152,33 @@ print(pair_stats)
 print("\n")
 tokenizer.prettier(pair_stats)
 
+
+
+
 print("\n")
 merged_pair = tokenizer.merge_pair(pair_frequency, pair_stats)
+print(merged_pair)
+
+pair_stats = tokenizer.get_pair_stats(merged_pair)
+
+print("\n")
+merged_pair = tokenizer.merge_pair(merged_pair, pair_stats)
+print(merged_pair)
+
+pair_stats = tokenizer.get_pair_stats(merged_pair)
+
+print("\n")
+merged_pair = tokenizer.merge_pair(merged_pair, pair_stats)
+print(merged_pair)
+
+pair_stats = tokenizer.get_pair_stats(merged_pair)
+
+print("\n")
+merged_pair = tokenizer.merge_pair(merged_pair, pair_stats)
+print(merged_pair)
+
+pair_stats = tokenizer.get_pair_stats(merged_pair)
+
+print("\n")
+merged_pair = tokenizer.merge_pair(merged_pair, pair_stats)
 print(merged_pair)
