@@ -73,7 +73,9 @@ class ScaledDotProductAttention(nn.Module):
 
 # basic testing
 if __name__ == "__main__":
-    # test batch parameters: Batch = 2, Heads = 4, Seq_len = 3, d_k = 8
+    # testing batch parameters: Batch = 2, Heads = 4, Seq_len = 3, d_k = 8
+    # Seq_len: sequence length means the number of tokens/items being processed in each sequence
+    # d_k: is the dimension of each key/query vector for one attention head (it is specified, not calculated)
     B, H, T, d_k = 2, 4, 3, 8
 
     Q = torch.randn(B, H, T, d_k)
