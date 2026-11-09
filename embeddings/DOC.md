@@ -1,4 +1,4 @@
 
 ## token.py
-maps maps discrete token IDs to dense vectors.
+maps discrete token IDs to dense vectors.
 
