@@ -11,3 +11,5 @@ Note on `encode / decode`: right now `tokenizer/tokenizer.py` implemented `train
 
 ## generate.py:
 It loads the checkpoint saved by `train.py` (including `model_state_dict`, `model_config`, and `vocab`), rebuilds the `Tokenizer` and `Transformer`, encodes a CLI prompt, calls `generate()` with KV-caching and sampling options, and decodes the generated token IDs back into text.
+
+===> UPDATE IN TOKENIZER DONE, HENCE TRAIN AND GENERATE MODIFIED ACCORDINGLY
